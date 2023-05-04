@@ -1,22 +1,24 @@
 package com.example.userservice.service;
 
 
-import com.example.userservice.DTO.BookingsDTO;
+import com.example.userservice.DTO.BookingDTO;
 import com.example.userservice.entity.Bookings;
 import com.example.userservice.exception.BookingNotFoundException;
+import com.example.userservice.kafka.BookingProducer;
 import com.example.userservice.repository.BookingRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class BookingService {
 
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -27,58 +29,79 @@ public class BookingService {
     @Autowired
     BookingRepository bookingsRepository;
 
-    public List<BookingsDTO> findBookingsByUserId(int userId) {
-        List<BookingsDTO> bookingsDTOS = new ArrayList<>();
-            List<Bookings> bookings = bookingsRepository.findAll();
-            bookings.forEach(o -> bookingsDTOS.add(convertBookingToBookingDTO(o)));
-        return bookingsDTOS.stream().sorted((a, b) -> Boolean.compare(a.isReturned(), b.isReturned())).collect(Collectors.toList());
+    private BookingProducer bookingProducer;
+
+    @Autowired
+    public BookingService(BookingProducer bookingProducer) {
+        this.bookingProducer = bookingProducer;
     }
 
-    public BookingsDTO submitNewBooking(BookingsDTO bookingsDTO) throws ParseException {
+    public void sendMessage(BookingDTO message) {
+        log.info("[BookingService] send booking to topic");
+        bookingProducer.send(message);
+    }
+
+    public List<BookingDTO> findBookingsByUserId(int userId) {
+
+        List<BookingDTO> bookingDTOS = new ArrayList<>();
+        List<Bookings> bookings = bookingsRepository.getBookingsByUserId(userId);
+        bookings.forEach(o -> bookingDTOS.add(convertBookingToBookingDTO(o)));
+        return bookingDTOS.stream().sorted((a, b) -> Boolean.compare(a.isReturned(), b.isReturned())).collect(Collectors.toList());
+    }
+
+    public BookingDTO submitNewBooking(BookingDTO bookingDTO) throws Exception {
 
         Bookings booking = new Bookings();
 
-        booking.setCarId(bookingsDTO.getCarId());
-        booking.setUserId(bookingsDTO.getUserId());
-        Date pickupDate = new SimpleDateFormat(DATE_TIME_FORMAT).parse(bookingsDTO.getPickupDate() + " " + bookingsDTO.getPickupHour());
-        Date returnDate = new SimpleDateFormat(DATE_TIME_FORMAT).parse(bookingsDTO.getReturnDate() + " " + bookingsDTO.getReturnHour());
+        booking.setBookingId(ObjectId.get().toHexString());
+        booking.setCarId(bookingDTO.getCarId());
+        booking.setUserId(bookingDTO.getUserId());
+        Date pickupDate = new SimpleDateFormat(DATE_TIME_FORMAT).parse(bookingDTO.getPickupDate() + " " + bookingDTO.getPickupHour());
+        Date returnDate = new SimpleDateFormat(DATE_TIME_FORMAT).parse(bookingDTO.getReturnDate() + " " + bookingDTO.getReturnHour());
         booking.setStartDate(pickupDate);
         booking.setEndDate(returnDate);
         booking.setReturned(false);
         Bookings savedBooking = bookingsRepository.save(booking);
 
+        sendMessage(bookingDTO);
+
         return convertBookingToBookingDTO(savedBooking);
     }
 
-    private BookingsDTO convertBookingToBookingDTO(Bookings booking) {
+    private BookingDTO convertBookingToBookingDTO(Bookings booking) {
 
-        BookingsDTO bookingsDTO = new BookingsDTO();
+        BookingDTO bookingDTO = new BookingDTO();
 
-        bookingsDTO.setBookingId(booking.getBookingId());
-        bookingsDTO.setCarId(booking.getCarId());
-        bookingsDTO.setUserId(booking.getUserId());
+        //bookingsDTO.setBookingId(booking.getBookingId());
+        bookingDTO.setCarId(booking.getCarId());
+        bookingDTO.setUserId(booking.getUserId());
         SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
         SimpleDateFormat timeFormatter = new SimpleDateFormat(TIME_FORMAT);
         String startDate = dateFormatter.format(booking.getStartDate());
         String startTime = timeFormatter.format(booking.getStartDate());
         String endDate = dateFormatter.format(booking.getEndDate());
         String endTime = timeFormatter.format(booking.getEndDate());
-        bookingsDTO.setPickupDate(startDate);
-        bookingsDTO.setPickupHour(startTime);
-        bookingsDTO.setReturnDate(endDate);
-        bookingsDTO.setReturnHour(endTime);
-        bookingsDTO.setReturned(booking.getReturned());
-        return bookingsDTO;
+        bookingDTO.setPickupDate(startDate);
+        bookingDTO.setPickupHour(startTime);
+        bookingDTO.setReturnDate(endDate);
+        bookingDTO.setReturnHour(endTime);
+        bookingDTO.setReturned(booking.getReturned());
+
+        return bookingDTO;
     }
 
-    public BookingsDTO returnCar(int bookingId) throws BookingNotFoundException {
-        Optional<Bookings> booking = bookingsRepository.findById(bookingId);
-        if (booking.isPresent()) {
-            booking.get().setReturned(true);
-            Bookings savedBooking = bookingsRepository.save(booking.get());
-            return convertBookingToBookingDTO(savedBooking);
+    public BookingDTO returnCar(int bookingId) throws BookingNotFoundException {
+
+        Bookings booking;
+        try {
+            booking = bookingsRepository.findByBookingId(bookingId);
+        } catch (Exception exception) {
+            throw exception;
         }
-        throw new BookingNotFoundException("Booking with Id " + bookingId + " not found");
+
+        Bookings savedBooking = bookingsRepository.save(booking);
+        booking.setReturned(true);
+        return convertBookingToBookingDTO(savedBooking);
     }
 
 }

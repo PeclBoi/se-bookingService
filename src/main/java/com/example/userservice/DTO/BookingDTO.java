@@ -3,13 +3,19 @@ package com.example.userservice.DTO;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class BookingsDTO {
+public class BookingDTO implements Serializable {
 
-    private int bookingId;
+    @Serial
+    private static final long serialVersionUID = -3965748134914559751L;
 
-    private int userId;
+    private String bookingId;
+
+    private String userId;
 
     private int carId;
 

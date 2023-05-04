@@ -3,6 +3,7 @@ package com.example.userservice.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 
 import java.util.Date;
 
@@ -11,9 +12,9 @@ import java.util.Date;
 
 public class Bookings {
 
+    private String bookingId;
     private int carId;
-    private int userId;
-    private int bookingId;
+    private String userId;
 
     private Date startDate;
 
@@ -21,7 +22,7 @@ public class Bookings {
 
     private Boolean returned;
 
-    public Bookings(int carId, int userId, Date startDate, Date endDate, Boolean returned) {
+    public Bookings(int carId, String userId, Date startDate, Date endDate, Boolean returned) {
         this.carId = carId;
         this.userId = userId;
         this.startDate = startDate;

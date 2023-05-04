@@ -13,7 +13,7 @@ import java.util.Properties;
 public class BookingKafkaConsumer {
 
     private final static String TOPIC = "booking";
-    private final static String BOOTSTRAP_SERVERS = "localhost:9092";
+    private final static String BOOTSTRAP_SERVERS = "broker:9092";
 
     public static void main(final String[] args) throws Exception {
 

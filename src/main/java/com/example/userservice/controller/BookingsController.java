@@ -1,8 +1,7 @@
 package com.example.userservice.controller;
 
-import com.example.userservice.DTO.BookingsDTO;
-import com.example.userservice.entity.Bookings;
-import com.example.userservice.repository.BookingRepository;
+import com.example.userservice.DTO.BookingDTO;
+import com.example.userservice.exception.BookingNotFoundException;
 import com.example.userservice.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,15 +17,24 @@ public class BookingsController {
     BookingService bookingService;
 
     @GetMapping()
-    public List<BookingsDTO> list() {
-        return bookingService.findBookingsByUserId(1);
+    public List<BookingDTO> findBookingsByUserId(@PathVariable("userId") int userId) {
+        return bookingService.findBookingsByUserId(userId);
     }
 
     @PostMapping()
-    public ResponseEntity submitNewBooking(@RequestBody BookingsDTO bookingsDTO) {
+    public ResponseEntity submitNewBooking(@RequestBody BookingDTO bookingDTO) {
         try {
-            return ResponseEntity.ok(bookingService.submitNewBooking(bookingsDTO));
+            return ResponseEntity.ok(bookingService.submitNewBooking(bookingDTO));
         } catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+        }
+    }
+
+    @PutMapping("/{bookingId}")
+    public ResponseEntity returnCar(@PathVariable("bookingId") int bookingId) {
+        try {
+            return ResponseEntity.ok(bookingService.returnCar(bookingId));
+        } catch (BookingNotFoundException exception) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
         }
     }
