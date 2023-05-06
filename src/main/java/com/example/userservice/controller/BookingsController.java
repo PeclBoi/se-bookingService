@@ -22,7 +22,7 @@ public class BookingsController {
     }
 
     @GetMapping()
-    public List<BookingDTO> findBookingsByUserId(@PathVariable("userId") int userId) {
+    public List<BookingDTO> findBookingsByUserId(@PathVariable("userId") String userId) {
         return bookingService.findBookingsByUserId(userId);
     }
 
@@ -36,7 +36,7 @@ public class BookingsController {
     }
 
     @PutMapping("/{bookingId}")
-    public ResponseEntity returnCar(@PathVariable("bookingId") int bookingId) {
+    public ResponseEntity returnCar(@PathVariable("bookingId") String bookingId) {
         try {
             return ResponseEntity.ok(bookingService.returnCar(bookingId));
         } catch (BookingNotFoundException exception) {

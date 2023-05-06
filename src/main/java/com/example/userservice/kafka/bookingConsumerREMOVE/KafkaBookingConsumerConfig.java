@@ -1,6 +1,7 @@
 package com.example.userservice.kafka.bookingConsumerREMOVE;
 
 import com.example.userservice.DTO.BookingDTO;
+import com.example.userservice.DTO.ReturningDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -39,6 +40,24 @@ public class KafkaBookingConsumerConfig {
         return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), jsonDeserializer);
     }
 
+    public ConsumerFactory<String, ReturningDTO> consumerReturnFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "consuming");
+
+        DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
+        Map<String, Class<?>> classMap = new HashMap<>();
+        typeMapper.setIdClassMapping(classMap);
+        typeMapper.addTrustedPackages("*");
+
+        JsonDeserializer<ReturningDTO> jsonDeserializer = new JsonDeserializer<>(ReturningDTO.class);
+        jsonDeserializer.setTypeMapper(typeMapper);
+        jsonDeserializer.setUseTypeMapperForKey(true);
+
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), jsonDeserializer);
+    }
+
+
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
@@ -55,4 +74,13 @@ public class KafkaBookingConsumerConfig {
         log.info("Configure concurrent consumer Kafka");
         return factory;
     }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ReturningDTO> kafkaReturnBookingListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ReturningDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerReturnFactory());
+        log.info("Configure concurrent consumer Kafka");
+        return factory;
+    }
+
 }

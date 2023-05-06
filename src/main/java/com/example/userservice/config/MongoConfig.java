@@ -1,7 +1,6 @@
 package com.example.userservice.config;
 
 
-import com.example.userservice.entity.Bookings;
 import com.example.userservice.repository.BookingRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
