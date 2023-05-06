@@ -1,4 +1,4 @@
-package com.example.userservice.kafka;
+package com.example.userservice.kafka.bookingProducer;
 
 import com.example.userservice.DTO.BookingDTO;
 import lombok.NoArgsConstructor;
@@ -34,4 +34,5 @@ public class BookingProducer {
             }
         });
     }
+
 }

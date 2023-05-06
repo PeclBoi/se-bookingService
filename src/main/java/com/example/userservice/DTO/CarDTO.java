@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class CarDTO implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = 8091264447847916492L;
+    private static final long serialVersionUID = 7952434632086438275L;
 
     private int carId;
 

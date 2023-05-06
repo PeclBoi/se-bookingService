@@ -1,6 +1,6 @@
-package com.example.userservice.kafka;
+package com.example.userservice.kafka.carListener;
 
-import com.example.userservice.DTO.BookingDTO;
+import com.example.userservice.DTO.CarDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -18,11 +18,11 @@ import java.util.Map;
 
 @Slf4j
 @Configuration
-public class KafkaBookingConsumerConfig {
+public class KafkaCarConsumerConfig {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
 
-    public ConsumerFactory<String, BookingDTO> consumerFactory() {
+    public ConsumerFactory<String, CarDTO> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, "consuming");
@@ -32,7 +32,7 @@ public class KafkaBookingConsumerConfig {
         typeMapper.setIdClassMapping(classMap);
         typeMapper.addTrustedPackages("*");
 
-        JsonDeserializer<BookingDTO> jsonDeserializer = new JsonDeserializer<>(BookingDTO.class);
+        JsonDeserializer<CarDTO> jsonDeserializer = new JsonDeserializer<>(CarDTO.class);
         jsonDeserializer.setTypeMapper(typeMapper);
         jsonDeserializer.setUseTypeMapperForKey(true);
 
@@ -49,8 +49,8 @@ public class KafkaBookingConsumerConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, BookingDTO> kafkaBookingListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, BookingDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, CarDTO> kafkaCarListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, CarDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         log.info("Configure concurrent consumer Kafka");
         return factory;

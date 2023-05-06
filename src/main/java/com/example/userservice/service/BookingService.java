@@ -2,9 +2,9 @@ package com.example.userservice.service;
 
 
 import com.example.userservice.DTO.BookingDTO;
+import com.example.userservice.kafka.bookingProducer.BookingProducer;
 import com.example.userservice.entity.Bookings;
 import com.example.userservice.exception.BookingNotFoundException;
-import com.example.userservice.kafka.BookingProducer;
 import com.example.userservice.repository.BookingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;

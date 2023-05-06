@@ -16,6 +16,11 @@ public class BookingsController {
     @Autowired
     BookingService bookingService;
 
+    @Autowired
+    public BookingsController(BookingService bookingService) {
+        this.bookingService = bookingService;
+    }
+
     @GetMapping()
     public List<BookingDTO> findBookingsByUserId(@PathVariable("userId") int userId) {
         return bookingService.findBookingsByUserId(userId);

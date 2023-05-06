@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: se-booking-mongo
+spec:
+  selector:
+    matchLabels:
+      app: se-booking-mongo
+  template:
+    metadata:
+      labels:
+        app: se-booking-mongo
+    spec:
+      containers:
+        - name: se-booking-mongo
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: storage
+              mountPath: /data/db
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: se-booking-mongo-pvc

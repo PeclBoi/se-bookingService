@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class BookingDTO implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = -3965748134914559751L;
+    private static final long serialVersionUID = -6162714535735874406L;
 
     private String bookingId;
 

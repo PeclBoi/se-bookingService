@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: se-booking
+spec:
+  selector:
+    matchLabels:
+      app: se-booking
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: se-booking
+    spec:
+      containers:
+        - name: se-booking
+          image: alexanderfh/booking_service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_URL
+              value: mongodb://se-booking-mongo:27017/dev
+            - name: KAFKA_URL
+              value: se-kafka:9092
