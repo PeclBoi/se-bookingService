@@ -29,4 +29,15 @@ public class BookingDTO implements Serializable {
 
     private boolean returned;
 
+    @Override
+    public String toString() {
+        return "BookingDTO{" +
+                "bookingId=" + bookingId +
+                ", startDate=" + pickupDate +
+                ", endDate=" + returnDate +
+                ", returned=" + returned +
+                '}';
+    }
+
+
 }
