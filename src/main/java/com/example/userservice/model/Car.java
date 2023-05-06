@@ -1,6 +1,5 @@
 package com.example.userservice.model;
 
-import com.example.userservice.entity.Bookings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,5 +22,5 @@ public class Car {
     private String currency;
     private int dailyRate;
     @DBRef
-    List<Bookings> bookings;
+    List<Booking> bookings;
 }
