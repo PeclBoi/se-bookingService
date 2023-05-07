@@ -22,7 +22,7 @@ public class BookingsController {
         this.bookingService = bookingService;
     }
 
-    @GetMapping()
+    @GetMapping("/users/{userId}")
     public List<BookingDTO> findBookingsByUserId(@PathVariable("userId") String userId) {
         return bookingService.findBookingsByUserId(userId);
     }

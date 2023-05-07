@@ -27,5 +27,6 @@ public class BookingDTO implements Serializable {
 
     private String returnHour;
 
+    private boolean returned;
 
 }

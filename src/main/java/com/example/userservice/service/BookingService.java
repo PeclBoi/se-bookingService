@@ -90,6 +90,7 @@ public class BookingService {
         bookingDTO.setPickupHour(startTime);
         bookingDTO.setReturnDate(endDate);
         bookingDTO.setReturnHour(endTime);
+        bookingDTO.setReturned(booking.isReturned());
 
         return bookingDTO;
     }
@@ -108,6 +109,7 @@ public class BookingService {
         ReturningDTO returningDTO = new ReturningDTO();
         returningDTO.setBookingId(booking.getBookingId());
         returningDTO.setCarId(booking.getCarId());
+
         bookingProducer.sendReturning(returningDTO);
 
         return convertBookingToBookingDTO(savedBooking);
