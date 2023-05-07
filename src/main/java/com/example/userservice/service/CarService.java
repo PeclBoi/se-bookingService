@@ -2,7 +2,6 @@ package com.example.userservice.service;
 
 
 import com.example.userservice.DTO.CarDTO;
-import com.example.userservice.kafka.carProducerREMOVE.CarProducer;
 import com.example.userservice.model.Car;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +21,12 @@ public class CarService {
 
     private static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    private CarProducer carProducer;
+//    private CarProducer carProducer;
 
-    @Autowired
-    public CarService(CarProducer carProducer) {
-        this.carProducer = carProducer;
-    }
+//    @Autowired
+//    public CarService(CarProducer carProducer) {
+//        this.carProducer = carProducer;
+//    }
 
     @Transactional(readOnly = true)
     public List<CarDTO> findCars(String pickupdate, String pickuphour, String returndate, String returnhour, String currency) throws ParseException {
@@ -41,10 +40,10 @@ public class CarService {
         return carsDTOS;
     }
 
-    public void sendMessage(CarDTO message) {
-        log.info("[CarService] send car to topic");
-        carProducer.send(message);
-    }
+//    public void sendMessage(CarDTO message) {
+//        log.info("[CarService] send car to topic");
+//        carProducer.send(message);
+//    }
 
     private boolean isNotInRange(Date date, Date startDate, Date endDate) {
         return date.before(startDate) || date.after(endDate);
