@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: se-booking-mongo-pvc
+  name: se-booking-mongo-pvc-new
 spec:
   accessModes:
     - ReadWriteOnce
